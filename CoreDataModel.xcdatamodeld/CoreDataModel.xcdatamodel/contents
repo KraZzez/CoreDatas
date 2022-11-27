@@ -17,6 +17,6 @@
         <attribute name="isComplete" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="mainTask" optional="YES" attributeType="String"/>
         <relationship name="frequency" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Frequency" inverseName="taskObjects" inverseEntity="Frequency"/>
-        <relationship name="subTasks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SubTask" inverseName="taskObject" inverseEntity="SubTask"/>
+        <relationship name="subTasks" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="SubTask" inverseName="taskObject" inverseEntity="SubTask"/>
     </entity>
 </model>

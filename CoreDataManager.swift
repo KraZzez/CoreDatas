@@ -94,6 +94,20 @@ class CoreDataRelationshipViewModel: ObservableObject {
         }
     }
     
+    func getTaskObjects(forFrequency frequency: Frequency) {
+        let request = NSFetchRequest<TaskObject>(entityName: "TaskObject")
+        
+        let filter = NSPredicate(format: "frequency == %@", frequency)
+        request.predicate = filter
+        
+        do {
+            taskObjects = try manager.context.fetch(request)
+        } catch let error {
+            print("Error fetching. \(error.localizedDescription)")
+        }
+    }
+    
+    
     func addFrequency() {
         let newFrequency = Frequency(context: manager.context)
         newFrequency.name = "Daily"
@@ -112,8 +126,6 @@ class CoreDataRelationshipViewModel: ObservableObject {
     }
     
     func addSubTask() {
-        getTaskObjects() // Doesnt work like I want
-        getFrequencies()
         let newSubTask = SubTask(context: manager.context)
         newSubTask.name = "aadadada"
         newSubTask.isComplete = false
@@ -123,9 +135,23 @@ class CoreDataRelationshipViewModel: ObservableObject {
         save()
     }
     
+    func deleteTaskObject() {
+        let taskObject = taskObjects[0] // Choose which taskobject is deleted.
+        manager.context.delete(taskObject)
+        save()
+    }
+    
+    func deleteSubTask() {
+        let subTask = subTasks[0] // Choose which taskobject is deleted.
+        manager.context.delete(subTask)
+        save()
+    }
+    
+    // Below is my own tests for adding a TaskObject and SubTask at the same time.
+    
     func addFirstObject() {
-        getFrequencies()
-        getSubTasks()
+        //getFrequencies()
+       // getSubTasks()
         let newTaskObject = TaskObject(context: manager.context)
         newTaskObject.mainTask = "Take out trash"
         newTaskObject.isComplete = false
@@ -134,7 +160,7 @@ class CoreDataRelationshipViewModel: ObservableObject {
         
         newTaskObject.frequency = frequencies[0]
         
-        newTaskObject.addToSubTasks(subTasks[2])
+     //   newTaskObject.addToSubTasks(subTasks[2])
         save()
     }
     
@@ -152,6 +178,7 @@ class CoreDataRelationshipViewModel: ObservableObject {
         let newSubObject = SubTask(context: manager.context)
         newSubObject.name = "SideQuest"
         newSubObject.isComplete = false
+        newSubObject.frequency = frequencies[0]
         
         save()
         getFrequencies()
@@ -172,7 +199,7 @@ class CoreDataRelationshipViewModel: ObservableObject {
     
     
     func save() {
-        frequencies.removeAll()
+        frequencies.removeAll()   // Funkar om man kommenterar ut dessa, typ
         taskObjects.removeAll()
         subTasks.removeAll()
         
@@ -193,8 +220,8 @@ struct CoreDataRelationships: View {
             ScrollView {
                 VStack(spacing: 20) {
                     Button(action: {
-                        vm.addTaskObject()
                         vm.addSubTask()
+                      //  vm.addSubTask()
                     }, label: {
                         Text("Button")
                             .foregroundColor(.white)
